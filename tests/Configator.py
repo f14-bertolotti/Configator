@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from Configator.Configator import Configator 
+from configator.Configator import Configator 
 
 import subprocess
 import optparse

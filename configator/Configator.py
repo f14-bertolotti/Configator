@@ -1,6 +1,6 @@
 
-from Configator.Options import GatorOption as option
-from Configator.Fielder import Fielder     as fielder
+from configator.Options import GatorOption as option
+from configator.Fielder import Fielder     as fielder
 
 import sys
 import copy

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 import unittest, copy
-from Configator.Fielder import Fielder 
+from configator.Fielder import Fielder 
 
 dictionary = {"A":"B","C":{"A":"B","C":{"A":"B"}}}
 fielder    = Fielder(dictionary)

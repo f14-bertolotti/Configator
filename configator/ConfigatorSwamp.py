@@ -1,5 +1,5 @@
 
-from Configator.Configator import Configator
+from configator.Configator import Configator
 
 import json, copy, sys
 

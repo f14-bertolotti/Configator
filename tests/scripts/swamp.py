@@ -1,4 +1,4 @@
-from Configator.ConfigatorSwamp import ConfigatorSwamp
+from configator.ConfigatorSwamp import ConfigatorSwamp
 
 import optparse
 
