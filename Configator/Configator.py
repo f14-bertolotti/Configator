@@ -1,10 +1,13 @@
-import Configator.Options as options
-import optparse           as  parser
 
-import json     
+from Configator.Options import GatorOption as option
+from Configator.Fielder import Fielder     as fielder
+
+import sys
+import copy
+import json    
+import optparse
 import functools
 
-def p(x):print("=", x,"=");return x
 
 class GatorKey:
     def __init__(self, tokens=list()):
@@ -21,60 +24,73 @@ class GatorKey:
 
 class Configator:
 
-    def __init__(self, path="./configuration.json"):
-        self.conf = Configator.load(path)
-        self.path = path
-        self.keys,self.opts = Configator.options(self.conf)
-        self.prsr = parser.OptionParser(option_class=options.GatorOption,
-                                        option_list =self.opts)
-        self.vals = self.prsr.parse_args()[0]
-       
-        for key in self.keys:
-            tmp = self.conf
-            for tkn in key.tokens[:-1]:
-                tmp = tmp[tkn]
-            tmp[key.tokens[-1]] = getattr(self.vals, str(key))
+    def __init__(self, path=None, name=None):
 
-            
+        ### REGISTER PARAMS #############################################################################
+        self.__name__ = GatorKey([name] if name else [])
+        self.__path__ = path if path else Configator.pop_configuration_path(sys.argv, str(self.__name__))
 
-        
+        ### THE ORIGINAL CONFIGURATION IS KEPT ###################################
+        self.__base_configuration__   = fielder(Configator.load(self.__path__))
+        self.__custom_configuration__ = copy.deepcopy(self.__base_configuration__)
+
+        ### CREATE OPTIONS & PARSER FROM THE BASE CONFIGURATION ################################################
+        self.__options__ = Configator.options(self.__base_configuration__, self.__name__)
+        self.__parser__  = optparse.OptionParser(option_class=option, option_list=self.__options__[1])
+
+        ### PARSE OPTIONS & UPDATE THE CONFIGURATION ####
+        self.__parsed__ = self.__parser__.parse_args()[0]
+        Configator.update(self.__custom_configuration__, self.__options__[0], self.__parsed__)   
+
+    def __getattr__(self, key):
+        return self[key]
+
+    def __getitem__(self, key):
+        return self.__custom_configuration__[key]
+
     @staticmethod
-    def apply(key,val,cnf):
-        print()
-        tkns = key.split(".")
-        cnf = functools.reduce(lambda x,y: p(x[y]),[cnf] + tkns.tokens[:-1])
-        cnf[tkns.tokens[-1]] = val
-    
+    def pop_configuration_path(arguments, name=None):
+        name = name if name else "configuration"
+        index = arguments.index(f"--{name}")
+        arguments.pop(index)
+        return arguments.pop(index)
+
     @staticmethod
-    def options(conf, prefix=GatorKey()):
+    def update(configuration, keys, options):
+        for key in keys:
 
-        opts, keys = list(), list()
-        for key, val in conf.items():
-            token = prefix.add(key)
+            ### TRAVERSE THE CNF RECURSIVELY ################################
+            temp_configuration = configuration
+            for token in key.tokens[:-1]:
+                temp_configuration = temp_configuration[token]
 
-            if type(val) == dict:
-                optname_tmp, options_tmp = Configator.options(conf[key], token)
-                keys += optname_tmp
-                opts += options_tmp                 
-            else:
-                keys.append(token)
-                opts.append(options.GatorOption(f"--{str(prefix.add(key))}", 
-                                                action="store", 
-                                                type=type(val).__name__, 
-                                                dest=str(token), 
-                                                default=conf[key]))
-       
-        return keys, opts                
+            ### UPDATE THE VALUE ############################################
+            temp_configuration[key.tokens[-1]] = getattr(options, str(key))
+
+
+    @staticmethod
+    def options(configuration, prefix=GatorKey()):
+
+        options, option_names = list(), list()
+        ### CREAT OPTION WITH RECURSION IF THERE IS A NESTED DICT ###########################################################################################################
+        for key, val in configuration.items():
+            option_name = prefix.add(key)
+
+            t_option_names, t_options = Configator.options(configuration[key], option_name) if type(val) == dict else \
+                                        ([option_name], [option(f"--{str(option_name)}", action="store", type=type(val).__name__, dest=str(option_name), default=configuration[key])])
+
+            option_names += t_option_names
+            options      +=      t_options
+
+        return option_names, options
 
     @staticmethod
     def load(path):
-        with open(path, "r") as file:
-            conf = json.loads(file.read())
-        return conf
+        with open(path, "r") as file: return json.loads(file.read())
 
     def __str__(self):
-        return str(self.conf)
+        return str(self.__custom_configuration__)
 
     def __repr__(self):
-        return json.dumps(self.conf, indent=4, sort_keys=True)
+        return json.dumps(self.__custom_configuration__, indent=4, sort_keys=True)
 
