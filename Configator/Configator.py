@@ -24,14 +24,14 @@ class GatorKey:
 
 class Configator:
 
-    def __init__(self, path=None, name=None):
+    def __init__(self, path=None, base=None, name=None):
 
         ### REGISTER PARAMS #############################################################################
         self.__name__ = GatorKey([name] if name else [])
-        self.__path__ = path if path else Configator.pop_configuration_path(sys.argv, str(self.__name__))
+        self.__path__ = path if path or base else Configator.pop_configuration_path(sys.argv, str(self.__name__))
 
         ### THE ORIGINAL CONFIGURATION IS KEPT ###################################
-        self.__base_configuration__   = fielder(Configator.load(self.__path__))
+        self.__base_configuration__   = fielder(Configator.load(self.__path__)) if not base else base
         self.__custom_configuration__ = copy.deepcopy(self.__base_configuration__)
 
         ### CREATE OPTIONS & PARSER FROM THE BASE CONFIGURATION ################################################
