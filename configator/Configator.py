@@ -100,5 +100,5 @@ class Configator:
         return str(self.__custom_configuration__)
 
     def __repr__(self):
-        return json.dumps(self.__custom_configuration__, indent=4, sort_keys=True)
+        return json.dumps(str(self.__custom_configuration__), indent=4, sort_keys=True)
 
