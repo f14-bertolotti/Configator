@@ -16,4 +16,10 @@ class Test(unittest.TestCase):
         cstmcnf = eval(subprocess.check_output(command, cwd=working_directory))
         self.assertEqual(cstmcnf["name3"]["name3"]["name0"], False)
 
+    def test_assignement(self):
+        cnf = Configator("tests/configurations/0.json")
+        cnf.name3 = False
+        cnf["name2"] = 10 
+        self.assertEqual(cnf.__custom_configuration__.__dictionary__["name3"], False)
+        self.assertEqual(cnf.__custom_configuration__.__dictionary__["name2"], 10)
 

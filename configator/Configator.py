@@ -48,6 +48,14 @@ class Configator:
     def __getitem__(self, key):
         return self.__custom_configuration__[key]
 
+    def __setitem__(self, key, val):
+        self.__custom_configuration__[key] = val
+
+    def __setattr__(self, key, val):
+        if key.endswith("__") and key.startswith("__"): self.__dict__[key] = val
+        else: self.__setitem__(key, val)
+
+
     @staticmethod
     def pop_configuration_path(arguments, name=None):
         name = name if name else "configuration"
