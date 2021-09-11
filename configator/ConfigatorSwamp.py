@@ -4,6 +4,16 @@ from configator.Configator import Configator
 import json, copy, sys
 
 class ConfigatorSwamp:
+    """
+        Manages multiple Configator.
+        Each configator is given a name.
+        Each configuration can be set from CLI using the given names.
+
+        __names__ : register the provided names.
+        __paths__ : register the CLI paths to the configurations.
+        __super_configuration__ : a dictionary which stores the configurations.
+        __argvs__ : CLI args stripped of the configuration args
+    """
     def __init__(self, *args):
        
         self.__names__ = args

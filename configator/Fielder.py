@@ -2,6 +2,22 @@ import copy
 import json
 
 class Fielder:
+    """
+
+    Fielder wraps a dictionary which can be accessed using also the dot notation.
+    For example: 
+        Given: d = {A: 1, B: 2, C:{A:1}}
+        The following operation are permitted:
+            d.A
+            d.A.C
+            d["A"]
+            d.A.C = 2
+            d["A"]["C"] = 2
+
+    Attributes:
+        __dictionary__ : the wrapped dictionary.
+
+    """
     def __init__(self, dictionary):
         self.__dictionary__ = dictionary
 

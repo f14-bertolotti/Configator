@@ -23,8 +23,27 @@ class GatorKey:
 
 
 class Configator:
+    """
+    Configator manages a json configuration file as simple dictionary.
+    It generate an option parser so that the configuration can be customized from command line.
+    For example: given a configuration such as {A:1, B:2, C:{A:1}}, one can set C[A] = 2 from command line.
+    The option available would be --A, --B, --C, --C.A
+    One can also set the configuration itself from commandline using the option --configuration
+    Also, the configuration can be customized dynamically with dot notation and indexing
+    """
 
     def __init__(self, path=None, base=None, name=None):
+        """
+            Generate options for optparse.
+            Parses options using optparse.
+            Updates the configuration with the provided CLI args.
+
+        Args:
+            path: path to a json file representing the configuration.
+            base: alternative to path, directly a dictionary representing the configuratio.
+            name: sets the root name for all the options.
+
+        """
 
         ### REGISTER PARAMS #############################################################################
         self.__name__ = GatorKey([name] if name else [])
