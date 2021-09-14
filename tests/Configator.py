@@ -23,3 +23,7 @@ class Test(unittest.TestCase):
         self.assertEqual(cnf.__custom_configuration__.__dictionary__["name3"], False)
         self.assertEqual(cnf.__custom_configuration__.__dictionary__["name2"], 10)
 
+    def test_from_dict(self):
+        cnf = Configator(base={"a":1,"b":2,"c":{"d":1}})
+        cnf.c.d = 10
+        self.assertEqual(cnf.__custom_configuration__.__dictionary__["c"]["d"], 10)

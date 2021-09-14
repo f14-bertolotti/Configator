@@ -1,6 +1,6 @@
 
-from configator.Options import GatorOption as option
-from configator.Fielder import Fielder     as fielder
+from configator.Options import GatorOption as Option
+from configator.Fielder import Fielder     as Fielder
 
 import sys
 import copy
@@ -50,12 +50,12 @@ class Configator:
         self.__path__ = path if path or base else Configator.pop_configuration_path(sys.argv, str(self.__name__))
 
         ### THE ORIGINAL CONFIGURATION IS KEPT ###################################
-        self.__base_configuration__   = fielder(Configator.load(self.__path__)) if not base else base
+        self.__base_configuration__   = Fielder(Configator.load(self.__path__)) if not base else Fielder(base)
         self.__custom_configuration__ = copy.deepcopy(self.__base_configuration__)
 
         ### CREATE OPTIONS & PARSER FROM THE BASE CONFIGURATION ################################################
         self.__options__ = Configator.options(self.__base_configuration__, self.__name__)
-        self.__parser__  = optparse.OptionParser(option_class=option, option_list=self.__options__[1])
+        self.__parser__  = optparse.OptionParser(option_class=Option, option_list=self.__options__[1])
 
         ### PARSE OPTIONS & UPDATE THE CONFIGURATION ####
         self.__parsed__ = self.__parser__.parse_args()[0]
@@ -104,7 +104,7 @@ class Configator:
             option_name = prefix.add(key)
 
             t_option_names, t_options = Configator.options(configuration[key], option_name) if type(val) == dict else \
-                                        ([option_name], [option(f"--{str(option_name)}", action="store", type=type(val).__name__, dest=str(option_name), default=configuration[key])])
+                                        ([option_name], [Option(f"--{str(option_name)}", action="store", type=type(val).__name__, dest=str(option_name), default=configuration[key])])
 
             option_names += t_option_names
             options      +=      t_options
