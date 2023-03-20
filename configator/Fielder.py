@@ -23,13 +23,20 @@ class Fielder:
 
     def __getattr__(self, key):
         try: return getattr(self.__dictionary__, key)
-        except AttributeError: return Fielder(self.__dictionary__[key]) if type(self.__dictionary__[key]) == dict else self.__dictionary__[key]
+        except AttributeError:
+            return Fielder(self.__dictionary__[key]) if type(self.__dictionary__[key]) == dict else self.__dictionary__[key]
 
     def __getitem__(self, key):
         return getattr(self, key)
 
     def __setitem__(self, key, val):
         self.__dictionary__[key] = val 
+
+    def __getstate__(self):
+        return self.__dictionary__
+
+    def __setstate__(self, state):
+        self.__dictionary__ = state
 
     def __setattr__(self, key, val):
         if key == "__dictionary__": self.__dict__[key] = val
@@ -47,5 +54,6 @@ class Fielder:
 
     def __repr__(self):
         return json.dumps(str(self.__dictionary__))
+
 
 

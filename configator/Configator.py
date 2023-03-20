@@ -1,4 +1,3 @@
-
 from configator.Options import GatorOption as Option
 from configator.Fielder import Fielder     as Fielder
 
@@ -60,6 +59,26 @@ class Configator:
         ### PARSE OPTIONS & UPDATE THE CONFIGURATION ####
         self.__parsed__ = self.__parser__.parse_args()[0]
         Configator.update(self.__custom_configuration__, self.__options__[0], self.__parsed__)   
+
+    def __getstate__(self):
+        return {"__name__"                 : self.__name__,
+                "__path__"                 : self.__path__,
+                "__base_configuration__"   : self.__base_configuration__,
+                "__custom_configuration__" : self.__custom_configuration__,
+                "__options__"              : self.__options__,
+                "__parser__"               : self.__parser__,
+                "__parsed__"               : self.__parsed__}
+
+    def __setstate__(self, dictionary):
+        self.__name__                 = dictionary["__name__"] 
+        self.__path__                 = dictionary["__path__"] 
+        self.__base_configuration__   = dictionary["__base_configuration__"] 
+        self.__custom_configuration__ = dictionary["__custom_configuration__"] 
+        self.__options__              = dictionary["__options__"] 
+        self.__parser__               = dictionary["__parser__"] 
+        self.__parsed__               = dictionary["__parsed__"] 
+
+
 
     def __getattr__(self, key):
         return self[key]
