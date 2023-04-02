@@ -1,0 +1,12 @@
+
+name0 : true
+name1 : 1
+name2 : "value"
+name3 :
+    name0 : false
+    name1 : 0
+    name2 : "value"
+    name3 :
+        name0 : true
+        name1 : 1
+        name2 : "value"

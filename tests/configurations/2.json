@@ -1,0 +1,13 @@
+{
+  "project_name": "hello-world",
+  "dirs": {
+    "home": "/home/user",
+    "venv": "{dirs.home}/venvs/{project_name}",
+    "data": "{dirs.venv}/data",
+    "output": "{dirs.data}/output-{parameters.parameter1}-{parameters.parameter2}"
+  },
+  "parameters": {
+    "parameter1": "a",
+    "parameter2": "b"
+  }
+}

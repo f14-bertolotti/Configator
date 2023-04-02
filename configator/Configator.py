@@ -1,11 +1,14 @@
 from configator.Options import GatorOption as Option
 from configator.Fielder import Fielder     as Fielder
+from configator.utils import yaml2dict, json2dict
 
+import os
 import sys
 import copy
-import json    
 import optparse
 import functools
+import dynamic_json
+import dynamic_yaml
 
 
 class GatorKey:
@@ -122,8 +125,10 @@ class Configator:
         for key, val in configuration.items():
             option_name = prefix.add(key)
 
-            t_option_names, t_options = Configator.options(configuration[key], option_name) if type(val) == dict else \
-                                        ([option_name], [Option(f"--{str(option_name)}", action="store", type=type(val).__name__, dest=str(option_name), default=configuration[key])])
+            if isinstance(val,dict):
+                t_option_names, t_options = Configator.options(configuration[key], option_name)
+            else:
+                 t_option_names, t_options  = [option_name], [Option(f"--{str(option_name)}", action="store", type=type(val).__name__, dest=str(option_name), default=configuration[key])]
 
             option_names += t_option_names
             options      +=      t_options
@@ -132,7 +137,10 @@ class Configator:
 
     @staticmethod
     def load(path):
-        with open(path, "r") as file: return json.loads(file.read())
+        if path.endswith(".json"):
+            with open(path, "r") as file: return json2dict(dynamic_json.load(file))
+        if path.endswith(".yaml"):
+            with open(path, "r") as file: return yaml2dict(dynamic_yaml.load(file))       
 
     def __str__(self):
         return str(self.__custom_configuration__)
