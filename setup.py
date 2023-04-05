@@ -7,4 +7,5 @@ author='f14',
 author_email='f14.bertolotti@email.com',
 license='GNU',
 packages=find_packages(),
+install_requires=['dynamic-json','dynamic-yaml'],
 zip_safe=False)

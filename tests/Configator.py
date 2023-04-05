@@ -3,9 +3,7 @@
 from configator.Configator import Configator 
 
 import subprocess
-import optparse
 import unittest
-import json
 import os
 
 class Test(unittest.TestCase):
@@ -33,9 +31,25 @@ class Test(unittest.TestCase):
     def test_dynamic_yaml(self):
         working_directory = os.path.join(os.path.dirname(os.path.abspath(__file__)),"..")
         cnfpath = "tests/configurations/2.yaml"
-        command = ["python3", "-m", "tests.scripts.simple", "--configuration", cnfpath]
+        command = ["python3", "-m", "tests.scripts.simple", "--configuration", cnfpath, "--project_name", "hello"]
         cstmcnf = eval(subprocess.check_output(command, cwd=working_directory))
-        self.assertEqual(cstmcnf["dirs"]["output"], "/home/user/venvs/hello-world/data/output-a-b")
+        self.assertEqual(cstmcnf["dirs"]["output"], "/home/user/venvs/hello/data/output-a-b")
+
+    def test_dynamic_json2(self):
+        working_directory = os.path.join(os.path.dirname(os.path.abspath(__file__)),"..")
+        cnfpath = "tests/configurations/2.json"
+        command = ["python3", "-m", "tests.scripts.simple-dynamic", "--configuration", cnfpath]
+        cstmcnf = eval(subprocess.check_output(command, cwd=working_directory))
+        self.assertEqual(cstmcnf["dirs"]["output"], "BBB/data/output-a-b")
+        self.assertEqual(cstmcnf["dirs"]["data"], "BBB/data")
+
+    def test_dynamic_yaml2(self):
+        working_directory = os.path.join(os.path.dirname(os.path.abspath(__file__)),"..")
+        cnfpath = "tests/configurations/2.yaml"
+        command = ["python3", "-m", "tests.scripts.simple-dynamic", "--configuration", cnfpath, "--project_name", "hello"]
+        cstmcnf = eval(subprocess.check_output(command, cwd=working_directory))
+        self.assertEqual(cstmcnf["dirs"]["output"], "BBB/data/output-a-b")
+        self.assertEqual(cstmcnf["dirs"]["data"], "BBB/data")
 
     def test_assignement_json(self):
         cnf = Configator("tests/configurations/0.json")

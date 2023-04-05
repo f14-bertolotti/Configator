@@ -2,11 +2,9 @@ from configator.Options import GatorOption as Option
 from configator.Fielder import Fielder     as Fielder
 from configator.utils import yaml2dict, json2dict
 
-import os
 import sys
 import copy
 import optparse
-import functools
 import dynamic_json
 import dynamic_yaml
 
@@ -106,6 +104,7 @@ class Configator:
 
     @staticmethod
     def update(configuration, keys, options):
+
         for key in keys:
 
             ### TRAVERSE THE CNF RECURSIVELY ################################
@@ -114,7 +113,10 @@ class Configator:
                 temp_configuration = temp_configuration[token]
 
             ### UPDATE THE VALUE ############################################
-            temp_configuration[key.tokens[-1]] = getattr(options, str(key))
+            if hasattr(options, str(key)) and getattr(options, str(key)) != None:
+                temp_configuration[key.tokens[-1]] = getattr(options, str(key))
+            
+
 
 
     @staticmethod
@@ -125,10 +127,10 @@ class Configator:
         for key, val in configuration.items():
             option_name = prefix.add(key)
 
-            if isinstance(val,dict):
-                t_option_names, t_options = Configator.options(configuration[key], option_name)
+            if hasattr(val, "__getitem__") and hasattr(val, "__setitem__"):
+                t_option_names, t_options = Configator.options(val, option_name)
             else:
-                 t_option_names, t_options  = [option_name], [Option(f"--{str(option_name)}", action="store", type=type(val).__name__, dest=str(option_name), default=configuration[key])]
+                 t_option_names, t_options  = [option_name], [Option(f"--{str(option_name)}", action="store", type=type(val).__name__, dest=str(option_name))]
 
             option_names += t_option_names
             options      +=      t_options
@@ -138,13 +140,15 @@ class Configator:
     @staticmethod
     def load(path):
         if path.endswith(".json"):
-            with open(path, "r") as file: return json2dict(dynamic_json.load(file))
+            with open(path, "r") as file: return dynamic_json.load(file)
         if path.endswith(".yaml"):
-            with open(path, "r") as file: return yaml2dict(dynamic_yaml.load(file))       
+            with open(path, "r") as file: return dynamic_yaml.load(file)       
 
     def __str__(self):
-        return str(self.__custom_configuration__)
+        if self.__path__ == None: return str(self.__custom_configuration__)
+        if self.__path__.endswith(".json"): return str(json2dict(self.__custom_configuration__))
+        if self.__path__.endswith(".yaml"): return str(yaml2dict(self.__custom_configuration__))
 
     def __repr__(self):
-        return json.dumps(str(self.__custom_configuration__), indent=4, sort_keys=True)
+        return str(self)
 
