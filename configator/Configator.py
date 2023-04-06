@@ -144,8 +144,13 @@ class Configator:
         if path.endswith(".yaml"):
             with open(path, "r") as file: return dynamic_yaml.load(file)       
 
+    def todict(self):
+        if self.__path__ == None: self.__custom_configuration__.__dictionary__
+        if self.__path__.endswith(".json"): return json2dict(self.__custom_configuration__)
+        if self.__path__.endswith(".yaml"): return yaml2dict(self.__custom_configuration__)
+
     def __str__(self):
-        if self.__path__ == None: return str(self.__custom_configuration__)
+        if self.__path__ == None: return str(self.__custom_configuration__.__dictionary__)
         if self.__path__.endswith(".json"): return str(json2dict(self.__custom_configuration__))
         if self.__path__.endswith(".yaml"): return str(yaml2dict(self.__custom_configuration__))
 
