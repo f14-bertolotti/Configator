@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 setup(name='configator',
-version='0.1',
+version='0.1.1',
 description='CLI changeable json configuration',
 url='https://github.com/f14-bertolotti/Configator',
 author='f14',
